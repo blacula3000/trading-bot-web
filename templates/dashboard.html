@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Options Trading Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>Options Trading Dashboard</h1>
+            <div class="symbol-selector">
+                <select id="symbol" onchange="updateCharts()">
+                    <option value="SPY">SPY</option>
+                    <option value="QQQ">QQQ</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="timeframes-grid">
+            <div class="chart-container">
+                <h3>1 Minute</h3>
+                <div id="chart1m"></div>
+                <div class="pattern-info">
+                    <div class="bullish">
+                        <h4>Bullish Patterns:</h4>
+                        <ul id="bullish1m"></ul>
+                    </div>
+                    <div class="bearish">
+                        <h4>Bearish Patterns:</h4>
+                        <ul id="bearish1m"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>5 Minutes</h3>
+                <div id="chart5m"></div>
+                <div class="pattern-info">
+                    <div class="bullish">
+                        <h4>Bullish Patterns:</h4>
+                        <ul id="bullish5m"></ul>
+                    </div>
+                    <div class="bearish">
+                        <h4>Bearish Patterns:</h4>
+                        <ul id="bearish5m"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>15 Minutes</h3>
+                <div id="chart15m"></div>
+                <div class="pattern-info">
+                    <div class="bullish">
+                        <h4>Bullish Patterns:</h4>
+                        <ul id="bullish15m"></ul>
+                    </div>
+                    <div class="bearish">
+                        <h4>Bearish Patterns:</h4>
+                        <ul id="bearish15m"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>1 Hour</h3>
+                <div id="chart1h"></div>
+                <div class="pattern-info">
+                    <div class="bullish">
+                        <h4>Bullish Patterns:</h4>
+                        <ul id="bullish1h"></ul>
+                    </div>
+                    <div class="bearish">
+                        <h4>Bearish Patterns:</h4>
+                        <ul id="bearish1h"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCharts() {
+            fetch('/api/market_data')
+                .then(response => response.json())
+                .then(data => {
+                    const symbol = document.getElementById('symbol').value;
+                    const symbolData = data[symbol];
+                    
+                    Object.keys(symbolData).forEach(timeframe => {
+                        const chartData = [{
+                            x: symbolData[timeframe].timestamps,
+                            y: symbolData[timeframe].prices,
+                            type: 'scatter',
+                            name: 'Price'
+                        }];
+                        
+                        Plotly.newPlot(`chart${timeframe}`, chartData);
+                    });
+                });
+        }
+
+        setInterval(updateCharts, 60000);
+        updateCharts();
+    </script>
+</body>
+</html>
