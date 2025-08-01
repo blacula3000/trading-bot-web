@@ -22,11 +22,11 @@ class WebullTrader:
     def login(self):
         try:
             self.wb.login(
-                username=os.getenv('gardydupiton@gmail.com'),
-                password=os.getenv('Reale$tate2023D'),
+                username=os.getenv('WEBULL_USERNAME'),
+                password=os.getenv('WEBULL_PASSWORD'),
                 device_name='trading_bot'
             )
-            self.wb.get_trade_token(os.getenv('157533'))
+            self.wb.get_trade_token(os.getenv('WEBULL_TRADE_TOKEN'))
             self.wb.set_paper_trading()
             self.logger.info("Successfully logged into Webull paper trading")
         except Exception as e:
